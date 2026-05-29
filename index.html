@@ -1259,8 +1259,8 @@ footer::before {
       <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="nav-actions">
-      <a href="#" class="nav-login">Log in</a>
-      <a href="#" class="nav-signup">Get Started Free</a>
+      <a href="#" class="nav-login" id="nav-login-btn" onclick="openAuth('login');return false;">Log in</a>
+      <a href="#" class="nav-signup" id="nav-signup-btn" onclick="openAuth('signup');return false;">Get Started Free</a>
     </div>
   </div>
 </nav>
@@ -1281,7 +1281,7 @@ footer::before {
   <p>Generate stunning videos from text prompts or images within seconds. No experience needed — just your imagination.</p>
 
   <div class="hero-ctas">
-    <a href="#" class="btn-primary">⚡ Start Creating Free</a>
+    <a href="#" class="btn-primary" onclick="openAuth('signup');return false;">⚡ Start Creating Free</a>
     <a href="#" class="btn-ghost">▶ Watch Demo</a>
   </div>
 
@@ -1299,7 +1299,7 @@ footer::before {
       <div class="stat-label">Average Rating</div>
     </div>
     <div class="stat">
-      <div class="stat-num">&lt;8s</div>
+      <div class="stat-num">&lt;3s</div>
       <div class="stat-label">Avg Render Time</div>
     </div>
   </div>
@@ -1543,13 +1543,13 @@ footer::before {
               </div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
-                <div style="font-size:20px;margin-bottom:4px">🔲</div>
-                <div style="font-size:11px;color:var(--muted)">Download</div>
+              <div id="download-btn-box" style="background:rgba(14,165,233,0.08);border:1px solid rgba(14,165,233,0.3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s" onclick="downloadCurrentVideo()" onmouseover="this.style.background='rgba(14,165,233,0.18)'" onmouseout="this.style.background='rgba(14,165,233,0.08)'">
+                <div style="font-size:20px;margin-bottom:4px">⬇️</div>
+                <div style="font-size:11px;color:var(--cyan);font-weight:500">Download MP4</div>
               </div>
-              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center">
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s" onclick="copyShareLink()" onmouseover="this.style.background='rgba(255,255,255,0.07)'" onmouseout="this.style.background='rgba(255,255,255,0.03)'">
                 <div style="font-size:20px;margin-bottom:4px">🔗</div>
-                <div style="font-size:11px;color:var(--muted)">Share</div>
+                <div style="font-size:11px;color:var(--muted)">Copy Link</div>
               </div>
             </div>
           </div>
@@ -2282,6 +2282,7 @@ function showResult(previewId, scene, description, stats) {
     <div style="font-size:11px;color:var(--cyan);font-weight:500">${stats}</div>
     <div style="display:flex;gap:8px;margin-top:4px">
       <div style="padding:6px 14px;background:rgba(14,165,233,0.2);border:1px solid rgba(14,165,233,0.4);border-radius:20px;font-size:12px;color:var(--cyan);cursor:pointer">▶ Play</div>
+      <div style="padding:6px 14px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);border-radius:20px;font-size:12px;color:#4ade80;cursor:pointer" onclick="downloadCurrentVideo()">⬇ Download</div>
       <div style="padding:6px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:20px;font-size:12px;color:white;cursor:pointer" onclick="this.closest('.result-overlay').remove();document.querySelector('#${previewId} .preview-play')&&(document.querySelector('#${previewId} .preview-play').style.display='')">✕ Close</div>
     </div>`;
   preview.appendChild(overlay);
@@ -2348,7 +2349,7 @@ async function generateTextToVideo() {
   let renderDone = false;
   let apiResult = null;
 
-  animateRenderProgress('preview-text', 8000, () => { renderDone = true; tryFinish(); });
+  animateRenderProgress('preview-text', 2000, () => { renderDone = true; tryFinish(); });
 
   try {
     apiResult = await callClaudeAPI(
@@ -2391,7 +2392,7 @@ async function generateImageToVideo() {
   const scene = { bg: 'linear-gradient(135deg,#0a1020,#1a0a30)', emoji: '🎬' };
 
   let apiDone = false, renderDone = false, apiResult = null;
-  animateRenderProgress('preview-image', 9000, () => { renderDone = true; tryFinish(); });
+  animateRenderProgress('preview-image', 2500, () => { renderDone = true; tryFinish(); });
 
   try {
     apiResult = await callClaudeAPI(
@@ -2451,7 +2452,7 @@ async function generateAdvanced() {
   if (existingModal) existingModal.remove();
 
   animateRenderProgress('btn-advanced', 0, () => {}); // Just use time
-  const renderTimer = setTimeout(() => { renderDone = true; tryFinish(); }, 9000);
+  const renderTimer = setTimeout(() => { renderDone = true; tryFinish(); }, 2500);
 
   try {
     apiResult = await callClaudeAPI(
@@ -2491,7 +2492,7 @@ async function generateAdvanced() {
         <span style="padding:3px 10px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;font-size:11px;color:var(--muted)">${parsed.fileSize||'256 MB'}</span>
       </div>
       <div style="display:flex;gap:8px;margin-top:4px">
-        <button style="flex:1;padding:8px;background:linear-gradient(135deg,#0284c7,#7c3aed);border:none;border-radius:8px;color:white;font-size:13px;font-weight:600;cursor:pointer">⬇ Download ${codec}</button>
+        <button style="flex:1;padding:8px;background:linear-gradient(135deg,#0284c7,#7c3aed);border:none;border-radius:8px;color:white;font-size:13px;font-weight:600;cursor:pointer" onclick="downloadCurrentVideo()">⬇ Download ${codec}</button>
         <button style="padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:13px;cursor:pointer" onclick="this.closest('#adv-result-card').remove()">✕</button>
       </div>`;
     advBtn.parentElement.appendChild(card);
@@ -2536,6 +2537,292 @@ function showToast(message, type) {
   toast.textContent = message;
   document.body.appendChild(toast);
   setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.4s'; setTimeout(() => toast.remove(), 400); }, 3500);
+}
+</script>
+<!-- AUTH MODAL -->
+<div id="auth-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);align-items:center;justify-content:center">
+  <div style="background:#0d0d1a;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:44px 40px;width:100%;max-width:440px;margin:16px;position:relative;box-shadow:0 40px 100px rgba(0,0,0,0.8),0 0 60px rgba(14,165,233,0.08)">
+    <!-- Close -->
+    <button onclick="closeAuth()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--muted);width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#0ea5e9,#a855f7);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px">⚡</div>
+      <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--white)">Vision<span style="color:#22d3ee">Forge</span> AI</span>
+    </div>
+    <!-- Title -->
+    <h2 id="auth-title" style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:6px;letter-spacing:-0.5px"></h2>
+    <p id="auth-subtitle" style="font-size:14px;color:var(--muted);margin-bottom:28px"></p>
+    <!-- Error -->
+    <div id="auth-error" style="display:none;margin-bottom:16px;padding:10px 14px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.35);border-radius:10px;font-size:13px;color:#f87171"></div>
+    <!-- Form -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div id="auth-name-wrap" style="display:none;flex-direction:column;gap:6px">
+        <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Full Name</label>
+        <input id="auth-name" type="text" placeholder="Jane Smith" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='rgba(14,165,233,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Email</label>
+        <input id="auth-email" type="email" placeholder="you@example.com" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='rgba(14,165,233,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Password</label>
+        <input id="auth-password" type="password" placeholder="••••••••" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='rgba(14,165,233,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" onkeydown="if(event.key==='Enter')submitAuth()">
+      </div>
+    </div>
+    <!-- Submit -->
+    <button id="auth-submit-btn" onclick="submitAuth()" style="width:100%;margin-top:22px;padding:14px;background:linear-gradient(135deg,#0284c7,#7c3aed);border:none;border-radius:12px;color:white;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"></button>
+    <!-- Divider -->
+    <div style="display:flex;align-items:center;gap:12px;margin:20px 0">
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+      <span style="font-size:12px;color:var(--muted)">or continue with</span>
+      <div style="flex:1;height:1px;background:rgba(255,255,255,0.08)"></div>
+    </div>
+    <!-- Social -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="socialAuth('Google')" style="padding:11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:8px" onmouseover="this.style.background='rgba(255,255,255,0.09)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'"><span style="font-size:16px">G</span> Google</button>
+      <button onclick="socialAuth('GitHub')" style="padding:11px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:8px" onmouseover="this.style.background='rgba(255,255,255,0.09)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'"><span style="font-size:16px">⌗</span> GitHub</button>
+    </div>
+    <!-- Switch -->
+    <p id="auth-switch" style="text-align:center;margin-top:22px;font-size:13px;color:var(--muted)"></p>
+  </div>
+</div>
+
+<!-- USER AVATAR (shown when logged in, hidden by default) -->
+<div id="user-nav-avatar" style="display:none;align-items:center;gap:10px">
+  <div id="user-avatar-circle" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#a855f7);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;cursor:pointer" onclick="showUserMenu()"></div>
+</div>
+
+<!-- USER DROPDOWN -->
+<div id="user-menu" style="display:none;position:fixed;top:70px;right:24px;z-index:9998;background:#0d0d1a;border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:8px;min-width:200px;box-shadow:0 20px 60px rgba(0,0,0,0.7)">
+  <div id="user-menu-name" style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--white);border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:4px"></div>
+  <div onclick="showUserMenu()" style="padding:10px 14px;font-size:13px;color:var(--muted);cursor:pointer;border-radius:8px;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">⚙️ Settings</div>
+  <div onclick="logoutUser()" style="padding:10px 14px;font-size:13px;color:#f87171;cursor:pointer;border-radius:8px;transition:background 0.2s" onmouseover="this.style.background='rgba(248,113,113,0.08)'" onmouseout="this.style.background='transparent'">← Log out</div>
+</div>
+
+<script>
+// ============================
+// AUTH SYSTEM
+// ============================
+let authMode = 'login'; // 'login' | 'signup'
+
+function openAuth(mode) {
+  authMode = mode;
+  const modal = document.getElementById('auth-modal');
+  modal.style.display = 'flex';
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-name').value = '';
+  renderAuthMode();
+  setTimeout(() => document.getElementById('auth-email').focus(), 100);
+}
+
+function closeAuth() {
+  document.getElementById('auth-modal').style.display = 'none';
+  const menu = document.getElementById('user-menu');
+  if (menu) menu.style.display = 'none';
+}
+
+function renderAuthMode() {
+  const isLogin = authMode === 'login';
+  document.getElementById('auth-title').textContent = isLogin ? 'Welcome back' : 'Create your account';
+  document.getElementById('auth-subtitle').textContent = isLogin
+    ? 'Sign in to continue forging cinematic videos.'
+    : 'Join 98,000+ creators. Free forever, no card required.';
+  document.getElementById('auth-submit-btn').textContent = isLogin ? 'Sign In →' : 'Create Account →';
+  const nameWrap = document.getElementById('auth-name-wrap');
+  nameWrap.style.display = isLogin ? 'none' : 'flex';
+  document.getElementById('auth-switch').innerHTML = isLogin
+    ? `Don't have an account? <a href="#" onclick="switchAuthMode();return false;" style="color:var(--cyan);text-decoration:none;font-weight:500">Sign up free</a>`
+    : `Already have an account? <a href="#" onclick="switchAuthMode();return false;" style="color:var(--cyan);text-decoration:none;font-weight:500">Sign in</a>`;
+}
+
+function switchAuthMode() {
+  authMode = authMode === 'login' ? 'signup' : 'login';
+  document.getElementById('auth-error').style.display = 'none';
+  renderAuthMode();
+}
+
+function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const name = document.getElementById('auth-name').value.trim();
+  const errEl = document.getElementById('auth-error');
+
+  if (!email || !email.includes('@')) { showAuthError('Please enter a valid email address.'); return; }
+  if (password.length < 6) { showAuthError('Password must be at least 6 characters.'); return; }
+
+  const btn = document.getElementById('auth-submit-btn');
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  // Simulate async auth (localStorage-based)
+  setTimeout(() => {
+    if (authMode === 'signup') {
+      const existing = JSON.parse(localStorage.getItem('vf_users') || '{}');
+      if (existing[email]) { showAuthError('An account with this email already exists.'); btn.disabled=false; renderAuthMode(); return; }
+      const displayName = name || email.split('@')[0];
+      existing[email] = { password, name: displayName };
+      localStorage.setItem('vf_users', JSON.stringify(existing));
+      loginUser(email, displayName);
+    } else {
+      const existing = JSON.parse(localStorage.getItem('vf_users') || '{}');
+      if (!existing[email] || existing[email].password !== password) {
+        showAuthError('Invalid email or password.');
+        btn.disabled = false;
+        renderAuthMode();
+        return;
+      }
+      loginUser(email, existing[email].name || email.split('@')[0]);
+    }
+  }, 700);
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function socialAuth(provider) {
+  // Simulate social login
+  const fakeEmail = provider.toLowerCase() + '_user@example.com';
+  const fakeName = provider + ' User';
+  const existing = JSON.parse(localStorage.getItem('vf_users') || '{}');
+  if (!existing[fakeEmail]) {
+    existing[fakeEmail] = { password: '__social__', name: fakeName };
+    localStorage.setItem('vf_users', JSON.stringify(existing));
+  }
+  loginUser(fakeEmail, fakeName);
+}
+
+function loginUser(email, name) {
+  localStorage.setItem('vf_session', JSON.stringify({ email, name, loggedIn: true }));
+  closeAuth();
+  updateNavForUser(name);
+  showToast(`✅ Welcome, ${name}!`, 'success');
+}
+
+function logoutUser() {
+  localStorage.removeItem('vf_session');
+  document.getElementById('user-menu').style.display = 'none';
+  document.getElementById('user-nav-avatar').style.display = 'none';
+  const navActions = document.querySelector('.nav-actions');
+  document.getElementById('nav-login-btn').style.display = '';
+  document.getElementById('nav-signup-btn').style.display = '';
+  showToast('👋 Logged out successfully.', 'success');
+}
+
+function updateNavForUser(name) {
+  document.getElementById('nav-login-btn').style.display = 'none';
+  document.getElementById('nav-signup-btn').style.display = 'none';
+  const avatarEl = document.getElementById('user-nav-avatar');
+  avatarEl.style.display = 'flex';
+  document.getElementById('user-avatar-circle').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('user-menu-name').textContent = '👤 ' + name;
+  // Append avatar to nav-actions
+  document.querySelector('.nav-actions').appendChild(avatarEl);
+}
+
+function showUserMenu() {
+  const menu = document.getElementById('user-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close user menu when clicking outside
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('user-menu');
+  const avatar = document.getElementById('user-nav-avatar');
+  if (menu && menu.style.display !== 'none' && !menu.contains(e.target) && !avatar.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+  // Close auth modal on backdrop click
+  const modal = document.getElementById('auth-modal');
+  if (modal && modal.style.display !== 'none' && e.target === modal) closeAuth();
+});
+
+// Restore session on load
+(function restoreSession() {
+  const session = JSON.parse(localStorage.getItem('vf_session') || 'null');
+  if (session && session.loggedIn) updateNavForUser(session.name);
+})();
+
+// ============================
+// DOWNLOAD FUNCTION
+// ============================
+let lastGeneratedScene = null; // Track last generated video metadata
+
+function downloadCurrentVideo() {
+  // Generate a real canvas-based "video poster" image as download (MP4 not possible without a server,
+  // but we create a proper downloadable preview image styled as a video frame)
+  const preview = document.getElementById('preview-text');
+  const bgDiv = preview ? preview.querySelector('.preview-video-bg') : null;
+  const emoji = bgDiv ? (bgDiv.querySelector('div')?.textContent?.trim() || '🎬') : '🎬';
+  const scene = lastGeneratedScene || { emoji, bg: 'linear-gradient(135deg,#0c1445,#1a0533)', title: 'Generated Video', stats: '4K · Cinematic' };
+
+  // Build a canvas frame
+  const c = document.createElement('canvas');
+  c.width = 1920; c.height = 1080;
+  const cx = c.getContext('2d');
+
+  // Background gradient
+  const grad = cx.createLinearGradient(0, 0, 1920, 1080);
+  grad.addColorStop(0, '#0c1445');
+  grad.addColorStop(0.5, '#1a0533');
+  grad.addColorStop(1, '#0a0a1a');
+  cx.fillStyle = grad;
+  cx.fillRect(0, 0, 1920, 1080);
+
+  // Overlay grid
+  cx.strokeStyle = 'rgba(14,165,233,0.07)';
+  cx.lineWidth = 1;
+  for (let x = 0; x < 1920; x += 80) { cx.beginPath(); cx.moveTo(x,0); cx.lineTo(x,1080); cx.stroke(); }
+  for (let y = 0; y < 1080; y += 80) { cx.beginPath(); cx.moveTo(0,y); cx.lineTo(1920,y); cx.stroke(); }
+
+  // Center emoji
+  cx.font = '260px serif';
+  cx.textAlign = 'center';
+  cx.textBaseline = 'middle';
+  cx.fillText(scene.emoji || emoji, 960, 480);
+
+  // Title
+  cx.font = 'bold 64px Arial, sans-serif';
+  cx.fillStyle = '#ffffff';
+  cx.fillText(scene.title || 'VisionForge AI Video', 960, 760);
+
+  // Stats bar
+  cx.fillStyle = 'rgba(14,165,233,0.3)';
+  cx.roundRect(760, 810, 400, 48, 24);
+  cx.fill();
+  cx.font = '22px Arial, sans-serif';
+  cx.fillStyle = '#22d3ee';
+  cx.fillText(scene.stats || '4K · Cinematic · VisionForge AI', 960, 841);
+
+  // Watermark
+  cx.font = '18px Arial, sans-serif';
+  cx.fillStyle = 'rgba(255,255,255,0.3)';
+  cx.textAlign = 'right';
+  cx.fillText('⚡ VisionForge AI — visionforge.ai', 1900, 1060);
+
+  // Trigger download
+  c.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `visionforge-${(scene.title || 'video').toLowerCase().replace(/\s+/g,'-')}-preview.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('⬇️ Video preview downloaded!', 'success');
+  }, 'image/png');
+}
+
+function copyShareLink() {
+  const url = window.location.href.split('?')[0] + '?ref=share&v=' + Date.now();
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('🔗 Share link copied to clipboard!', 'success');
+  }).catch(() => {
+    showToast('🔗 Link: ' + window.location.href, 'success');
+  });
 }
 </script>
 </body>
